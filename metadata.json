@@ -1,0 +1,7 @@
+{
+  "name": "SkillForge - Student Portfolio & Opportunity Hub",
+  "description": "A comprehensive platform for students to build portfolios, manage certificates, explore Erasmus opportunities, and verify skills through interactive quizzes.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
