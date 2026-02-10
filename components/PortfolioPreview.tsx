@@ -10,9 +10,10 @@ interface PortfolioPreviewProps {
 
 const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-  const config = user.portfolioConfig || { layout: 'STANDARD', theme: 'BLUE', font: 'INTER' };
+  const config = user.portfolioConfig || { layout: 'STANDARD', theme: 'RED', font: 'INTER' };
 
   const themeColors: Record<string, { accent: string, text: string, bg: string, border: string, bgSoft: string }> = {
+    RED: { accent: 'text-red-500', text: 'text-red-500', bg: 'bg-red-600', border: 'border-red-500/20', bgSoft: 'bg-red-500/10' },
     BLUE: { accent: 'text-blue-500', text: 'text-blue-500', bg: 'bg-blue-600', border: 'border-blue-500/20', bgSoft: 'bg-blue-500/10' },
     PURPLE: { accent: 'text-purple-500', text: 'text-purple-500', bg: 'bg-purple-600', border: 'border-purple-500/20', bgSoft: 'bg-purple-500/10' },
     ORANGE: { accent: 'text-orange-500', text: 'text-orange-500', bg: 'bg-orange-600', border: 'border-orange-500/20', bgSoft: 'bg-orange-500/10' },
@@ -20,7 +21,7 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
     NEUTRAL: { accent: 'text-white', text: 'text-white', bg: 'bg-white', border: 'border-white/20', bgSoft: 'bg-white/10' },
   };
 
-  const theme = themeColors[config.theme] || themeColors.BLUE;
+  const theme = themeColors[config.theme] || themeColors.RED;
   const fonts: Record<string, string> = { INTER: 'font-inter', JAKARTA: 'font-jakarta', SPACE: 'font-space', PLAYFAIR: 'font-playfair' };
   const fontClass = fonts[config.font] || 'font-inter';
 
@@ -31,7 +32,7 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
   const closeOverlay = () => setActiveProject(null);
 
   return (
-    <div className={`bg-black min-h-screen text-white selection:bg-blue-500 selection:text-white ${fontClass} relative`}>
+    <div className={`bg-black min-h-screen text-white selection:bg-red-500 selection:text-white ${fontClass} relative`}>
 
       {/* PLÁVAJÚCE TLAČIDLO NASPÄŤ */}
       {onBack && (
@@ -189,7 +190,7 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
                 <div className="flex gap-2 flex-wrap">
                   {project.tags?.map(t => <span key={t} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-zinc-400 uppercase tracking-wider">{t}</span>)}
                 </div>
-                <h3 className="text-3xl font-black font-jakarta group-hover:text-blue-500 transition-colors cursor-pointer" onClick={() => setActiveProject(project)}>{project.title}</h3>
+                <h3 className="text-3xl font-black font-jakarta group-hover:text-red-500 transition-colors cursor-pointer" onClick={() => setActiveProject(project)}>{project.title}</h3>
                 <p className="text-zinc-400 leading-relaxed font-bold line-clamp-3">{project.description}</p>
                 <button onClick={() => setActiveProject(project)} className={`inline-flex items-center gap-3 px-8 py-4 ${theme.bg} text-white font-black rounded-full hover:scale-105 transition-all text-xs uppercase tracking-widest`}>
                   Zobraziť Detail <ArrowUpRight size={18} />
@@ -261,7 +262,7 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
       {/* Lightbox */}
       {lightboxImage && (
         <div className="fixed inset-0 z-[200] bg-black/98 backdrop-blur-2xl flex items-center justify-center p-8 animate-in fade-in duration-300" onClick={() => setLightboxImage(null)}>
-          <button className="absolute top-10 right-10 p-4 text-white hover:text-blue-500 transition-colors z-[210]" onClick={() => setLightboxImage(null)}>
+          <button className="absolute top-10 right-10 p-4 text-white hover:text-red-500 transition-colors z-[210]" onClick={() => setLightboxImage(null)}>
             <X size={40} />
           </button>
           <img src={lightboxImage} className="max-w-7xl max-h-[85vh] rounded-xl shadow-2xl object-contain animate-in zoom-in-95 duration-500" onClick={(e) => e.stopPropagation()} />

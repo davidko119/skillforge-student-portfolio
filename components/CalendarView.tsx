@@ -35,8 +35,8 @@ const getIconForType = (type: string) => {
 
 const CalendarView: React.FC<CalendarViewProps> = ({ opportunities: initialOpps, user, setUser, theme }) => {
   const isDark = theme === 'MODERN_DARK';
-  const brandColor = isDark ? 'text-blue-500' : 'text-red-600';
-  const brandBg = isDark ? 'bg-blue-600' : 'bg-red-600';
+  const brandColor = isDark ? 'text-red-500' : 'text-red-600';
+  const brandBg = isDark ? 'bg-red-600' : 'bg-red-600';
   const headingClass = "font-black font-jakarta tracking-tight";
 
   const [showPrefForm, setShowPrefForm] = useState(!user.preferences);
@@ -171,7 +171,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ opportunities: initialOpps,
             <div className="text-center space-y-4">
               <h3 className="text-2xl font-black font-jakarta tracking-tight">{SEARCH_MESSAGES[currentMessageIndex]}</h3>
               <div className={`w-72 h-3 rounded-full overflow-hidden mx-auto ${isDark ? 'bg-zinc-900 border border-white/5' : 'bg-zinc-100 border border-black/5'}`}>
-                <div className={`h-full ${brandBg} transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.4)]`} style={{ width: `${searchProgress}%` }} />
+                <div className={`h-full ${brandBg} transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.4)]`} style={{ width: `${searchProgress}%` }} />
               </div>
               <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">Prehľadávame dôveryhodné zdroje</p>
             </div>
@@ -182,10 +182,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({ opportunities: initialOpps,
               displayOpps.map(opp => {
                 const isSaved = user.savedOpportunityIds.includes(opp.id);
                 return (
-                  <div key={opp.id} className={`group border rounded-[2.5rem] p-7 transition-all flex flex-col justify-between hover:-translate-y-1 ${isDark ? 'bg-zinc-950 border-white/5 hover:border-blue-500/40 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'bg-white border-black/5 hover:border-red-600/40 shadow-sm hover:shadow-xl'}`}>
+                  <div key={opp.id} className={`group border rounded-[2.5rem] p-7 transition-all flex flex-col justify-between hover:-translate-y-1 ${isDark ? 'bg-zinc-950 border-white/5 hover:border-red-500/40 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'bg-white border-black/5 hover:border-red-600/40 shadow-sm hover:shadow-xl'}`}>
                     <div className="space-y-5">
                       <div className="flex justify-between items-start">
-                        <div className={`w-16 h-16 rounded-3xl flex items-center justify-center transition-transform group-hover:scale-110 ${isDark ? 'bg-blue-500/10 text-blue-500' : 'bg-red-500/10 text-red-600'}`}>
+                        <div className={`w-16 h-16 rounded-3xl flex items-center justify-center transition-transform group-hover:scale-110 ${isDark ? 'bg-red-500/10 text-red-500' : 'bg-red-500/10 text-red-600'}`}>
                           {getIconForType(opp.type)}
                         </div>
                         <span className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] rounded-full border ${isDark ? 'bg-zinc-900 text-zinc-400 border-white/5' : 'bg-zinc-50 text-zinc-500 border-black/5'}`}>{opp.type}</span>
@@ -204,7 +204,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ opportunities: initialOpps,
                       <button
                         onClick={() => toggleSave(opp.id)}
                         title={isSaved ? "Odobrať z kalendára" : "Uložiť do kalendára"}
-                        className={`px-5 py-4 rounded-2xl border-2 transition-all active:scale-95 ${isSaved ? `${brandBg} text-white border-transparent shadow-lg shadow-blue-500/20` : `${isDark ? 'border-white/5 bg-zinc-900 text-zinc-500 hover:text-white hover:border-white/20' : 'border-black/5 bg-zinc-50 text-zinc-300 hover:text-red-500 hover:border-red-500/20'}`}`}
+                        className={`px-5 py-4 rounded-2xl border-2 transition-all active:scale-95 ${isSaved ? `${brandBg} text-white border-transparent shadow-lg shadow-red-500/20` : `${isDark ? 'border-white/5 bg-zinc-900 text-zinc-500 hover:text-white hover:border-white/20' : 'border-black/5 bg-zinc-50 text-zinc-300 hover:text-red-500 hover:border-red-500/20'}`}`}
                       >
                         <Calendar size={20} fill={isSaved ? "currentColor" : "none"} />
                       </button>
@@ -239,7 +239,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ opportunities: initialOpps,
             </button>
 
             <div className="text-center space-y-3">
-              <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl ${isDark ? 'bg-blue-600/10' : 'bg-red-600/10'}`}>
+              <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl ${isDark ? 'bg-red-600/10' : 'bg-red-600/10'}`}>
                 <Filter className={brandColor} size={36} />
               </div>
               <h3 className={`text-4xl ${headingClass}`}>Personalizácia</h3>
@@ -249,21 +249,21 @@ const CalendarView: React.FC<CalendarViewProps> = ({ opportunities: initialOpps,
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-3 md:col-span-2">
                 <label className="text-xs font-black uppercase text-zinc-500 tracking-[0.2em] px-1">Odbor štúdia</label>
-                <input name="fieldOfStudy" required defaultValue={user.preferences?.fieldOfStudy || ''} placeholder="napr. Informatika, Psychológia..." className={`w-full rounded-[1.25rem] p-5 border-2 outline-none font-bold text-lg transition-all focus:ring-4 focus:ring-blue-500/10 ${isDark ? 'bg-zinc-900 border-white/5 focus:border-blue-500/50' : 'bg-zinc-50 border-black/5 focus:border-red-600/50'}`} />
+                <input name="fieldOfStudy" required defaultValue={user.preferences?.fieldOfStudy || ''} placeholder="napr. Informatika, Psychológia..." className={`w-full rounded-[1.25rem] p-5 border-2 outline-none font-bold text-lg transition-all focus:ring-4 focus:ring-red-500/10 ${isDark ? 'bg-zinc-900 border-white/5 focus:border-red-500/50' : 'bg-zinc-50 border-black/5 focus:border-red-600/50'}`} />
               </div>
 
               <div className="space-y-3">
                 <label className="text-xs font-black uppercase text-zinc-500 tracking-[0.2em] px-1">Záujmy (čiarkou)</label>
-                <input name="interests" required defaultValue={user.preferences?.interests.join(', ') || ''} placeholder="AI, Design, Ekológia" className={`w-full rounded-[1.25rem] p-5 border-2 outline-none font-bold transition-all focus:ring-4 focus:ring-blue-500/10 ${isDark ? 'bg-zinc-900 border-white/5 focus:border-blue-500/50' : 'bg-zinc-50 border-black/5 focus:border-red-600/50'}`} />
+                <input name="interests" required defaultValue={user.preferences?.interests.join(', ') || ''} placeholder="AI, Design, Ekológia" className={`w-full rounded-[1.25rem] p-5 border-2 outline-none font-bold transition-all focus:ring-4 focus:ring-red-500/10 ${isDark ? 'bg-zinc-900 border-white/5 focus:border-red-500/50' : 'bg-zinc-50 border-black/5 focus:border-red-600/50'}`} />
               </div>
               <div className="space-y-3">
                 <label className="text-xs font-black uppercase text-zinc-500 tracking-[0.2em] px-1">Lokality</label>
-                <input name="locations" required defaultValue={user.preferences?.preferredLocations.join(', ') || ''} placeholder="Berlín, Praha, Online" className={`w-full rounded-[1.25rem] p-5 border-2 outline-none font-bold transition-all focus:ring-4 focus:ring-blue-500/10 ${isDark ? 'bg-zinc-900 border-white/5 focus:border-blue-500/50' : 'bg-zinc-50 border-black/5 focus:border-red-600/50'}`} />
+                <input name="locations" required defaultValue={user.preferences?.preferredLocations.join(', ') || ''} placeholder="Berlín, Praha, Online" className={`w-full rounded-[1.25rem] p-5 border-2 outline-none font-bold transition-all focus:ring-4 focus:ring-red-500/10 ${isDark ? 'bg-zinc-900 border-white/5 focus:border-red-500/50' : 'bg-zinc-50 border-black/5 focus:border-red-600/50'}`} />
               </div>
 
               <div className="space-y-3">
                 <label className="text-xs font-black uppercase text-zinc-500 tracking-[0.2em] px-1">Stupeň štúdia</label>
-                <select name="degreeLevel" className={`w-full rounded-[1.25rem] p-5 border-2 outline-none font-bold transition-all focus:ring-4 focus:ring-blue-500/10 ${isDark ? 'bg-zinc-900 border-white/5 focus:border-blue-500/50' : 'bg-zinc-50 border-black/5 focus:border-red-600/50'}`}>
+                <select name="degreeLevel" className={`w-full rounded-[1.25rem] p-5 border-2 outline-none font-bold transition-all focus:ring-4 focus:ring-red-500/10 ${isDark ? 'bg-zinc-900 border-white/5 focus:border-red-500/50' : 'bg-zinc-50 border-black/5 focus:border-red-600/50'}`}>
                   {['Stredná škola', 'Bakalár', 'Magister / Inžinier', 'Doktorand', 'Iné'].map(opt => (
                     <option key={opt} value={opt} selected={user.preferences?.degreeLevel === opt}>{opt}</option>
                   ))}
@@ -275,7 +275,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ opportunities: initialOpps,
                 <div className="grid grid-cols-2 gap-3">
                   {['Erasmus', 'Stáž', 'Workshop', 'Súťaž'].map(type => (
                     <label key={type} className={`flex items-center gap-3 p-4 border-2 rounded-2xl cursor-pointer transition-all ${isDark ? 'bg-zinc-900 border-white/5 hover:border-white/20' : 'bg-zinc-50 border-black/5 hover:border-black/20'}`}>
-                      <input type="checkbox" name="types" value={type} defaultChecked={user.preferences?.opportunityTypes.includes(type)} className="w-4 h-4 accent-blue-500" />
+                      <input type="checkbox" name="types" value={type} defaultChecked={user.preferences?.opportunityTypes.includes(type)} className="w-4 h-4 accent-red-500" />
                       <span className="text-xs font-black uppercase tracking-widest">{type}</span>
                     </label>
                   ))}
@@ -284,7 +284,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ opportunities: initialOpps,
             </div>
 
             <div className="flex gap-4 pt-6">
-              <button type="submit" className={`flex-1 py-5 text-white text-base font-black rounded-[1.5rem] transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-500/20 ${brandBg}`}>Uložiť a spustiť hľadanie</button>
+              <button type="submit" className={`flex-1 py-5 text-white text-base font-black rounded-[1.5rem] transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-red-500/20 ${brandBg}`}>Uložiť a spustiť hľadanie</button>
               <button type="button" onClick={() => setShowPrefForm(false)} className={`px-10 py-5 rounded-[1.5rem] font-black text-base transition-all active:scale-95 ${isDark ? 'bg-zinc-900 text-white hover:bg-zinc-800' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}>Zavrieť</button>
             </div>
           </form>

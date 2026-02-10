@@ -26,8 +26,8 @@ const Auth: React.FC<AuthProps> = ({ onAuth }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-black p-6 relative overflow-hidden font-inter">
       {/* Decorative Blur */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 blur-[150px] rounded-full" />
-      
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/10 blur-[150px] rounded-full" />
+
       <div className="max-w-md w-full relative z-10 animate-in fade-in zoom-in-95 duration-700">
         <div className="text-center mb-10">
           <div className="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-[0_0_40px_rgba(255,255,255,0.2)]">
@@ -39,14 +39,14 @@ const Auth: React.FC<AuthProps> = ({ onAuth }) => {
 
         <form onSubmit={handleSubmit} className="bg-zinc-950 border border-white/10 rounded-[2.5rem] p-10 space-y-6 shadow-2xl">
           <div className="flex bg-zinc-900 p-1.5 rounded-2xl mb-4">
-            <button 
+            <button
               type="button"
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${isLogin ? 'bg-white text-black shadow-lg' : 'text-zinc-500 hover:text-white'}`}
             >
               Prihlásiť sa
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${!isLogin ? 'bg-white text-black shadow-lg' : 'text-zinc-500 hover:text-white'}`}
@@ -59,9 +59,9 @@ const Auth: React.FC<AuthProps> = ({ onAuth }) => {
             <div>
               <label className="text-xs uppercase font-bold text-zinc-500 block mb-2 px-1">Celé meno</label>
               <div className="relative">
-                <input 
-                  type="text" 
-                  className="w-full bg-zinc-900 border border-white/5 rounded-2xl px-5 py-4 pl-12 outline-none focus:ring-2 focus:ring-blue-500 text-white transition-all font-bold"
+                <input
+                  type="text"
+                  className="w-full bg-zinc-900 border border-white/5 rounded-2xl px-5 py-4 pl-12 outline-none focus:ring-2 focus:ring-red-500 text-white transition-all font-bold"
                   placeholder="Ján Novák"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -75,9 +75,9 @@ const Auth: React.FC<AuthProps> = ({ onAuth }) => {
           <div>
             <label className="text-xs uppercase font-bold text-zinc-500 block mb-2 px-1">E-mail</label>
             <div className="relative">
-              <input 
-                type="email" 
-                className="w-full bg-zinc-900 border border-white/5 rounded-2xl px-5 py-4 pl-12 outline-none focus:ring-2 focus:ring-blue-500 text-white transition-all font-bold"
+              <input
+                type="email"
+                className="w-full bg-zinc-900 border border-white/5 rounded-2xl px-5 py-4 pl-12 outline-none focus:ring-2 focus:ring-red-500 text-white transition-all font-bold"
                 placeholder="meno@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -90,9 +90,9 @@ const Auth: React.FC<AuthProps> = ({ onAuth }) => {
           <div>
             <label className="text-xs uppercase font-bold text-zinc-500 block mb-2 px-1">Heslo</label>
             <div className="relative">
-              <input 
-                type="password" 
-                className="w-full bg-zinc-900 border border-white/5 rounded-2xl px-5 py-4 pl-12 outline-none focus:ring-2 focus:ring-blue-500 text-white transition-all font-bold"
+              <input
+                type="password"
+                className="w-full bg-zinc-900 border border-white/5 rounded-2xl px-5 py-4 pl-12 outline-none focus:ring-2 focus:ring-red-500 text-white transition-all font-bold"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -102,8 +102,8 @@ const Auth: React.FC<AuthProps> = ({ onAuth }) => {
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-full py-4 bg-white text-black font-black rounded-2xl flex items-center justify-center gap-2 hover:bg-zinc-200 transition-all transform active:scale-95 shadow-lg group uppercase text-xs tracking-widest"
           >
             {isLogin ? 'Vstúpiť do platformy' : 'Vytvoriť účet'}

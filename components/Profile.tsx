@@ -16,10 +16,10 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
   const isDark = theme === 'MODERN_DARK';
-  const brandColor = isDark ? 'text-blue-500' : 'text-red-600';
-  const brandBg = isDark ? 'bg-blue-600' : 'bg-red-600';
-  const brandBgAlpha = isDark ? 'bg-blue-600/10' : 'bg-red-600/10';
-  const brandFocus = isDark ? 'focus:border-blue-500/30' : 'focus:border-red-500/30';
+  const brandColor = isDark ? 'text-red-500' : 'text-red-600';
+  const brandBg = isDark ? 'bg-red-600' : 'bg-red-600';
+  const brandBgAlpha = isDark ? 'bg-red-600/10' : 'bg-red-600/10';
+  const brandFocus = isDark ? 'focus:border-red-500/30' : 'focus:border-red-500/30';
   const headingClass = "font-black font-jakarta tracking-tight";
 
   const [newCert, setNewCert] = useState<Partial<Certificate>>({ title: '', issuer: '', date: '', imageUrl: '' });
@@ -71,7 +71,7 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
     <div className={`p-6 md:p-8 max-w-5xl mx-auto space-y-8 md:space-y-12 pb-32 animate-in fade-in duration-500`}>
 
       {/* QR & PORTFOLIO HEADER */}
-      <section className={`${isDark ? 'bg-zinc-950 border-blue-500/20' : 'bg-white border-red-600/10 shadow-xl shadow-red-500/5'} border-2 rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 md:gap-10`}>
+      <section className={`${isDark ? 'bg-zinc-950 border-red-500/20' : 'bg-white border-red-600/10 shadow-xl shadow-red-500/5'} border-2 rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 md:gap-10`}>
         <div className="bg-white p-3 md:p-4 rounded-2xl md:rounded-3xl shadow-xl shrink-0 group relative overflow-hidden border border-zinc-100">
           <img src={qrImageUrl} alt="Portfolio QR" className="w-40 h-40 md:w-48 md:h-48" />
         </div>
@@ -111,8 +111,8 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
           <div className="space-y-4">
             <label className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em] flex items-center gap-2"><Paintbrush size={12} /> Farba</label>
             <div className="flex flex-wrap gap-3">
-              {['BLUE', 'PURPLE', 'ORANGE', 'GREEN', 'NEUTRAL'].map(t => (
-                <button key={t} onClick={() => updatePortfolioConfig({ theme: t as any })} className={`w-10 h-10 rounded-full border-2 ${currentConfig.theme === t ? 'border-white' : 'border-transparent'}`} style={{ backgroundColor: t === 'BLUE' ? '#3b82f6' : t === 'PURPLE' ? '#a855f7' : t === 'ORANGE' ? '#f97316' : t === 'GREEN' ? '#22c55e' : '#71717a' }} />
+              {['RED', 'BLUE', 'PURPLE', 'ORANGE', 'GREEN', 'NEUTRAL'].map(t => (
+                <button key={t} onClick={() => updatePortfolioConfig({ theme: t as any })} className={`w-10 h-10 rounded-full border-2 ${currentConfig.theme === t ? 'border-white' : 'border-transparent'}`} style={{ backgroundColor: t === 'RED' ? '#dc2626' : t === 'BLUE' ? '#3b82f6' : t === 'PURPLE' ? '#a855f7' : t === 'ORANGE' ? '#f97316' : t === 'GREEN' ? '#22c55e' : '#71717a' }} />
               ))}
             </div>
           </div>
@@ -144,7 +144,7 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
           }} />
         </div>
         <div className="flex-1 w-full space-y-4">
-          <input type="text" className={`bg-transparent text-3xl md:text-5xl font-black outline-none w-full border-b-2 border-transparent focus:border-blue-500/30 pb-2`} value={user.name} onChange={(e) => updateUserInfo({ name: e.target.value })} />
+          <input type="text" className={`bg-transparent text-3xl md:text-5xl font-black outline-none w-full border-b-2 border-transparent focus:border-red-500/30 pb-2`} value={user.name} onChange={(e) => updateUserInfo({ name: e.target.value })} />
           <textarea className="bg-transparent text-lg outline-none w-full h-24 resize-none font-bold text-zinc-500" value={user.bio} placeholder="Tvoj bio..." onChange={(e) => updateUserInfo({ bio: e.target.value })} />
         </div>
       </div>
@@ -159,7 +159,7 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
             </div>
           ))}
           <div className="flex gap-2">
-            <input value={newSkill} onChange={(e) => setNewSkill(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && addSkill()} placeholder="Pridať skill..." className="bg-zinc-950 border border-white/5 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-500" />
+            <input value={newSkill} onChange={(e) => setNewSkill(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && addSkill()} placeholder="Pridať skill..." className="bg-zinc-950 border border-white/5 rounded-xl px-4 py-2 text-sm outline-none focus:border-red-500" />
             <button onClick={addSkill} className={`p-2 rounded-xl ${brandBg} text-white`}><Plus size={20} /></button>
           </div>
         </div>

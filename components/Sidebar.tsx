@@ -2,12 +2,12 @@
 import React from 'react';
 import { View, User, UserRole, AppTheme } from '../types';
 import Logo from './Logo';
-import { 
-  LayoutDashboard, 
-  UserCircle, 
-  CalendarDays, 
-  GraduationCap, 
-  Hammer, 
+import {
+  LayoutDashboard,
+  UserCircle,
+  CalendarDays,
+  GraduationCap,
+  Hammer,
   LogOut,
   Globe,
   Moon,
@@ -27,13 +27,13 @@ interface SidebarProps {
   setIsOpen: (open: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ 
-  currentView, onNavigate, user, onLogout, theme, onToggleTheme, isOpen, setIsOpen 
+const Sidebar: React.FC<SidebarProps> = ({
+  currentView, onNavigate, user, onLogout, theme, onToggleTheme, isOpen, setIsOpen
 }) => {
   const isDark = theme === 'MODERN_DARK';
-  const brandColor = isDark ? 'text-blue-500' : 'text-red-600';
-  const brandBgAlpha = isDark ? 'bg-blue-500/10' : 'bg-red-600/10';
-  const brandBorder = isDark ? 'border-blue-500/20' : 'border-red-600/20';
+  const brandColor = isDark ? 'text-red-500' : 'text-red-600';
+  const brandBgAlpha = isDark ? 'bg-red-500/10' : 'bg-red-600/10';
+  const brandBorder = isDark ? 'border-red-500/20' : 'border-red-600/20';
 
   const menuItems = [
     { id: 'DASHBOARD' as View, label: 'Prehľad', icon: LayoutDashboard },
@@ -47,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Mobile Backdrop */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[150] md:hidden"
           onClick={() => setIsOpen(false)}
         />
@@ -62,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-6 flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
             <Logo className="w-10 h-10" />
-            <span className="text-lg font-black font-jakarta tracking-tight leading-none">Digitálny<br/>študent</span>
+            <span className="text-lg font-black font-jakarta tracking-tight leading-none">Digitálny<br />študent</span>
           </div>
           <button onClick={() => setIsOpen(false)} className="md:hidden p-2 text-zinc-500">
             <X size={20} />
@@ -70,7 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <div className="px-6 mb-6">
-          <button 
+          <button
             onClick={onToggleTheme}
             className={`w-full flex items-center justify-between p-2 rounded-xl border transition-all ${isDark ? 'bg-zinc-900 border-white/5 text-zinc-400 hover:text-white' : 'bg-white border-black/5 text-zinc-500 hover:text-black shadow-sm'}`}
           >
@@ -79,7 +79,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               <span className="text-[10px] font-black uppercase tracking-widest">{isDark ? 'Modern Dark' : 'Clean Light'}</span>
             </div>
             <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${brandBgAlpha}`}>
-               <Palette size={12} className={brandColor} />
+              <Palette size={12} className={brandColor} />
             </div>
           </button>
         </div>
@@ -92,11 +92,10 @@ const Sidebar: React.FC<SidebarProps> = ({
               <button
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
-                  isActive 
-                    ? `${brandBgAlpha} ${brandColor} border ${brandBorder}` 
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive
+                    ? `${brandBgAlpha} ${brandColor} border ${brandBorder}`
                     : `${isDark ? 'text-zinc-400 hover:text-white hover:bg-white/5' : 'text-zinc-500 hover:text-black hover:bg-black/5'}`
-                }`}
+                  }`}
               >
                 <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                 <span className={`font-semibold text-sm`}>{item.label}</span>
@@ -108,11 +107,10 @@ const Sidebar: React.FC<SidebarProps> = ({
             <p className={`px-3 text-[10px] uppercase tracking-widest font-black mb-2 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>Creator Mode</p>
             <button
               onClick={() => onNavigate('CREATOR_HUB')}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
-                currentView === 'CREATOR_HUB' 
-                  ? `${isDark ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-amber-100 text-amber-600 border border-amber-200'}` 
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${currentView === 'CREATOR_HUB'
+                  ? `${isDark ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-amber-100 text-amber-600 border border-amber-200'}`
                   : `${isDark ? 'text-zinc-400 hover:text-white hover:bg-white/5' : 'text-zinc-500 hover:text-black hover:bg-black/5'}`
-              }`}
+                }`}
             >
               <Hammer size={20} strokeWidth={currentView === 'CREATOR_HUB' ? 2.5 : 2} />
               <span className="font-semibold text-sm">Vytvoriť kvíz</span>
@@ -130,7 +128,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               <p className={`text-[10px] uppercase font-bold ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{user.role}</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onLogout}
             className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors"
           >
