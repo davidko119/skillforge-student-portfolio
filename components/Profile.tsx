@@ -1,11 +1,11 @@
 
 import React, { useState, useRef } from 'react';
 import { User, Certificate, Project, PortfolioConfig, AppTheme, Education, Experience, Language } from '../types';
-import { 
-  Plus, Trash2, ExternalLink, X, Upload, Camera, 
+import {
+  Plus, Trash2, ExternalLink, X, Upload, Camera,
   Palette, Check, QrCode, Download, Copy,
   Layout, Type, Paintbrush, Monitor, Layers, Columns,
-  GraduationCap, Briefcase, Languages as LangIcon, Calendar
+  GraduationCap, Briefcase, Languages as LangIcon, Calendar, Image as ImageIcon
 } from 'lucide-react';
 
 interface ProfileProps {
@@ -26,8 +26,11 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
   const [newEdu, setNewEdu] = useState<Partial<Education>>({ school: '', degree: '', field: '', startYear: '', endYear: '' });
   const [newExp, setNewExp] = useState<Partial<Experience>>({ company: '', position: '', location: '', startDate: '', endDate: '', current: false, description: '' });
   const [newLang, setNewLang] = useState<Partial<Language>>({ name: '', level: 'B2' });
+  const [newProject, setNewProject] = useState<Partial<Project>>({ title: '', description: '', detailedDescription: '', imageUrl: '', link: '', galleryImages: [], tags: [] });
   const [newSkill, setNewSkill] = useState('');
-  
+
+  const [projectGalleryInputKey, setProjectGalleryInputKey] = useState(0); // Force re-render of file input
+
   const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -66,7 +69,7 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
 
   return (
     <div className={`p-6 md:p-8 max-w-5xl mx-auto space-y-8 md:space-y-12 pb-32 animate-in fade-in duration-500`}>
-      
+
       {/* QR & PORTFOLIO HEADER */}
       <section className={`${isDark ? 'bg-zinc-950 border-blue-500/20' : 'bg-white border-red-600/10 shadow-xl shadow-red-500/5'} border-2 rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 md:gap-10`}>
         <div className="bg-white p-3 md:p-4 rounded-2xl md:rounded-3xl shadow-xl shrink-0 group relative overflow-hidden border border-zinc-100">
@@ -97,30 +100,30 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-           <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em] flex items-center gap-2"><Layout size={12} /> Rozloženie</label>
-              <div className="grid grid-cols-1 gap-2">
-                {['STANDARD', 'GRID', 'MINIMAL'].map(l => (
-                  <button key={l} onClick={() => updatePortfolioConfig({ layout: l as any })} className={`p-4 rounded-xl border-2 transition-all text-sm font-bold ${currentConfig.layout === l ? (isDark ? 'bg-white text-black' : 'bg-zinc-900 text-white') : 'text-zinc-500'}`}>{l}</button>
-                ))}
-              </div>
-           </div>
-           <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em] flex items-center gap-2"><Paintbrush size={12} /> Farba</label>
-              <div className="flex flex-wrap gap-3">
-                {['BLUE', 'PURPLE', 'ORANGE', 'GREEN', 'NEUTRAL'].map(t => (
-                  <button key={t} onClick={() => updatePortfolioConfig({ theme: t as any })} className={`w-10 h-10 rounded-full border-2 ${currentConfig.theme === t ? 'border-white' : 'border-transparent'}`} style={{ backgroundColor: t === 'BLUE' ? '#3b82f6' : t === 'PURPLE' ? '#a855f7' : t === 'ORANGE' ? '#f97316' : t === 'GREEN' ? '#22c55e' : '#71717a' }} />
-                ))}
-              </div>
-           </div>
-           <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em] flex items-center gap-2"><Type size={12} /> Písmo</label>
-              <div className="grid grid-cols-1 gap-2">
-                {['INTER', 'JAKARTA', 'SPACE', 'PLAYFAIR'].map(f => (
-                  <button key={f} onClick={() => updatePortfolioConfig({ font: f as any })} className={`p-4 rounded-xl border-2 transition-all text-sm font-bold ${currentConfig.font === f ? (isDark ? 'bg-white text-black' : 'bg-zinc-900 text-white') : 'text-zinc-500'}`}>{f}</button>
-                ))}
-              </div>
-           </div>
+          <div className="space-y-4">
+            <label className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em] flex items-center gap-2"><Layout size={12} /> Rozloženie</label>
+            <div className="grid grid-cols-1 gap-2">
+              {['STANDARD', 'GRID', 'MINIMAL'].map(l => (
+                <button key={l} onClick={() => updatePortfolioConfig({ layout: l as any })} className={`p-4 rounded-xl border-2 transition-all text-sm font-bold ${currentConfig.layout === l ? (isDark ? 'bg-white text-black' : 'bg-zinc-900 text-white') : 'text-zinc-500'}`}>{l}</button>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-4">
+            <label className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em] flex items-center gap-2"><Paintbrush size={12} /> Farba</label>
+            <div className="flex flex-wrap gap-3">
+              {['BLUE', 'PURPLE', 'ORANGE', 'GREEN', 'NEUTRAL'].map(t => (
+                <button key={t} onClick={() => updatePortfolioConfig({ theme: t as any })} className={`w-10 h-10 rounded-full border-2 ${currentConfig.theme === t ? 'border-white' : 'border-transparent'}`} style={{ backgroundColor: t === 'BLUE' ? '#3b82f6' : t === 'PURPLE' ? '#a855f7' : t === 'ORANGE' ? '#f97316' : t === 'GREEN' ? '#22c55e' : '#71717a' }} />
+              ))}
+            </div>
+          </div>
+          <div className="space-y-4">
+            <label className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em] flex items-center gap-2"><Type size={12} /> Písmo</label>
+            <div className="grid grid-cols-1 gap-2">
+              {['INTER', 'JAKARTA', 'SPACE', 'PLAYFAIR'].map(f => (
+                <button key={f} onClick={() => updatePortfolioConfig({ font: f as any })} className={`p-4 rounded-xl border-2 transition-all text-sm font-bold ${currentConfig.font === f ? (isDark ? 'bg-white text-black' : 'bg-zinc-900 text-white') : 'text-zinc-500'}`}>{f}</button>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -166,42 +169,42 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* EDUCATION */}
         <section className="space-y-4">
-           <div className="flex justify-between items-center">
-             <h3 className={`text-xl flex items-center gap-2 ${headingClass}`}><GraduationCap size={20} className={brandColor} /> Vzdelanie</h3>
-             <button onClick={() => (document.getElementById('edu-modal') as any).showModal()} className={`${brandColor} font-black text-xs uppercase`}>+ Pridať</button>
-           </div>
-           <div className="space-y-4">
-              {user.education?.map(edu => (
-                <div key={edu.id} className="p-4 bg-zinc-900/50 border border-white/5 rounded-2xl flex justify-between items-start">
-                  <div>
-                    <p className="font-bold">{edu.school}</p>
-                    <p className="text-xs text-zinc-500">{edu.degree} • {edu.field}</p>
-                    <p className="text-[10px] text-zinc-600 font-bold">{edu.startYear} - {edu.endYear}</p>
-                  </div>
-                  <button onClick={() => removeItem('education', edu.id)} className="text-red-500"><Trash2 size={14} /></button>
+          <div className="flex justify-between items-center">
+            <h3 className={`text-xl flex items-center gap-2 ${headingClass}`}><GraduationCap size={20} className={brandColor} /> Vzdelanie</h3>
+            <button onClick={() => (document.getElementById('edu-modal') as any).showModal()} className={`${brandColor} font-black text-xs uppercase`}>+ Pridať</button>
+          </div>
+          <div className="space-y-4">
+            {user.education?.map(edu => (
+              <div key={edu.id} className="p-4 bg-zinc-900/50 border border-white/5 rounded-2xl flex justify-between items-start">
+                <div>
+                  <p className="font-bold">{edu.school}</p>
+                  <p className="text-xs text-zinc-500">{edu.degree} • {edu.field}</p>
+                  <p className="text-[10px] text-zinc-600 font-bold">{edu.startYear} - {edu.endYear}</p>
                 </div>
-              ))}
-           </div>
+                <button onClick={() => removeItem('education', edu.id)} className="text-red-500"><Trash2 size={14} /></button>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* EXPERIENCE */}
         <section className="space-y-4">
-           <div className="flex justify-between items-center">
-             <h3 className={`text-xl flex items-center gap-2 ${headingClass}`}><Briefcase size={20} className={brandColor} /> Skúsenosti</h3>
-             <button onClick={() => (document.getElementById('exp-modal') as any).showModal()} className={`${brandColor} font-black text-xs uppercase`}>+ Pridať</button>
-           </div>
-           <div className="space-y-4">
-              {user.experience?.map(exp => (
-                <div key={exp.id} className="p-4 bg-zinc-900/50 border border-white/5 rounded-2xl flex justify-between items-start">
-                  <div>
-                    <p className="font-bold">{exp.position}</p>
-                    <p className="text-xs text-zinc-500">{exp.company} • {exp.location}</p>
-                    <p className="text-[10px] text-zinc-600 font-bold">{exp.startDate} - {exp.current ? 'Súčasnosť' : exp.endDate}</p>
-                  </div>
-                  <button onClick={() => removeItem('experience', exp.id)} className="text-red-500"><Trash2 size={14} /></button>
+          <div className="flex justify-between items-center">
+            <h3 className={`text-xl flex items-center gap-2 ${headingClass}`}><Briefcase size={20} className={brandColor} /> Skúsenosti</h3>
+            <button onClick={() => (document.getElementById('exp-modal') as any).showModal()} className={`${brandColor} font-black text-xs uppercase`}>+ Pridať</button>
+          </div>
+          <div className="space-y-4">
+            {user.experience?.map(exp => (
+              <div key={exp.id} className="p-4 bg-zinc-900/50 border border-white/5 rounded-2xl flex justify-between items-start">
+                <div>
+                  <p className="font-bold">{exp.position}</p>
+                  <p className="text-xs text-zinc-500">{exp.company} • {exp.location}</p>
+                  <p className="text-[10px] text-zinc-600 font-bold">{exp.startDate} - {exp.current ? 'Súčasnosť' : exp.endDate}</p>
                 </div>
-              ))}
-           </div>
+                <button onClick={() => removeItem('experience', exp.id)} className="text-red-500"><Trash2 size={14} /></button>
+              </div>
+            ))}
+          </div>
         </section>
       </div>
 
@@ -224,16 +227,45 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
         </div>
       </section>
 
+      {/* PROJECTS */}
+      <section className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className={`text-xl flex items-center gap-2 ${headingClass}`}><Monitor size={20} className={brandColor} /> Projekty</h3>
+          <button onClick={() => (document.getElementById('project-modal') as any).showModal()} className={`${brandColor} font-black text-xs uppercase`}>+ Pridať</button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {user.projects?.map(proj => (
+            <div key={proj.id} className="p-4 bg-zinc-900/50 border border-white/5 rounded-2xl flex gap-4">
+              <div className="w-24 h-24 bg-zinc-800 rounded-xl overflow-hidden shrink-0">
+                {proj.imageUrl ? <img src={proj.imageUrl} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-600"><ImageIcon size={24} /></div>}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-start">
+                  <h4 className="font-bold truncate pr-2">{proj.title}</h4>
+                  <button onClick={() => removeItem('projects', proj.id)} className="text-red-500 shrink-0"><Trash2 size={14} /></button>
+                </div>
+                <p className="text-xs text-zinc-500 line-clamp-2 mt-1">{proj.description}</p>
+                {proj.tags && proj.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {proj.tags.slice(0, 3).map(t => <span key={t} className="text-[10px] bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-400">{t}</span>)}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* MODALS */}
       <dialog id="edu-modal" className="bg-zinc-950 border border-white/10 p-8 rounded-[2rem] text-white w-full max-w-md outline-none backdrop:backdrop-blur-md">
         <h3 className="text-xl font-black mb-6">Pridať vzdelanie</h3>
         <div className="space-y-4">
-          <input placeholder="Škola" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewEdu({...newEdu, school: e.target.value})} />
-          <input placeholder="Titul (napr. Bc.)" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewEdu({...newEdu, degree: e.target.value})} />
-          <input placeholder="Odbor" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewEdu({...newEdu, field: e.target.value})} />
+          <input placeholder="Škola" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewEdu({ ...newEdu, school: e.target.value })} />
+          <input placeholder="Titul (napr. Bc.)" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewEdu({ ...newEdu, degree: e.target.value })} />
+          <input placeholder="Odbor" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewEdu({ ...newEdu, field: e.target.value })} />
           <div className="flex gap-4">
-            <input placeholder="Od (rok)" className="flex-1 bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewEdu({...newEdu, startYear: e.target.value})} />
-            <input placeholder="Do (rok)" className="flex-1 bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewEdu({...newEdu, endYear: e.target.value})} />
+            <input placeholder="Od (rok)" className="flex-1 bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewEdu({ ...newEdu, startYear: e.target.value })} />
+            <input placeholder="Do (rok)" className="flex-1 bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewEdu({ ...newEdu, endYear: e.target.value })} />
           </div>
           <button onClick={() => addItem('education', newEdu, () => setNewEdu({}), 'edu-modal')} className={`w-full py-4 rounded-xl font-black ${brandBg}`}>Uložiť</button>
           <button onClick={() => (document.getElementById('edu-modal') as any).close()} className="w-full py-4 text-zinc-500 font-bold">Zrušiť</button>
@@ -243,15 +275,15 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
       <dialog id="exp-modal" className="bg-zinc-950 border border-white/10 p-8 rounded-[2rem] text-white w-full max-w-md outline-none backdrop:backdrop-blur-md">
         <h3 className="text-xl font-black mb-6">Pridať skúsenosť</h3>
         <div className="space-y-4">
-          <input placeholder="Pozícia" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewExp({...newExp, position: e.target.value})} />
-          <input placeholder="Firma" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewExp({...newExp, company: e.target.value})} />
-          <input placeholder="Mesto / Krajina" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewExp({...newExp, location: e.target.value})} />
+          <input placeholder="Pozícia" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewExp({ ...newExp, position: e.target.value })} />
+          <input placeholder="Firma" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewExp({ ...newExp, company: e.target.value })} />
+          <input placeholder="Mesto / Krajina" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewExp({ ...newExp, location: e.target.value })} />
           <div className="flex gap-4">
-            <input placeholder="Od" type="month" className="flex-1 bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewExp({...newExp, startDate: e.target.value})} />
-            <input placeholder="Do" type="month" className="flex-1 bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewExp({...newExp, endDate: e.target.value})} />
+            <input placeholder="Od" type="month" className="flex-1 bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewExp({ ...newExp, startDate: e.target.value })} />
+            <input placeholder="Do" type="month" className="flex-1 bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewExp({ ...newExp, endDate: e.target.value })} />
           </div>
           <label className="flex items-center gap-2 px-2 text-sm font-bold text-zinc-400">
-            <input type="checkbox" onChange={e => setNewExp({...newExp, current: e.target.checked})} /> Aktuálne tu pracujem
+            <input type="checkbox" onChange={e => setNewExp({ ...newExp, current: e.target.checked })} /> Aktuálne tu pracujem
           </label>
           <button onClick={() => addItem('experience', newExp, () => setNewExp({}), 'exp-modal')} className={`w-full py-4 rounded-xl font-black ${brandBg}`}>Uložiť</button>
           <button onClick={() => (document.getElementById('exp-modal') as any).close()} className="w-full py-4 text-zinc-500 font-bold">Zrušiť</button>
@@ -261,12 +293,74 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, theme }) => {
       <dialog id="lang-modal" className="bg-zinc-950 border border-white/10 p-8 rounded-[2rem] text-white w-full max-w-sm outline-none backdrop:backdrop-blur-md">
         <h3 className="text-xl font-black mb-6">Pridať jazyk</h3>
         <div className="space-y-4">
-          <input placeholder="Názov jazyka" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewLang({...newLang, name: e.target.value})} />
-          <select className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewLang({...newLang, level: e.target.value as any})}>
+          <input placeholder="Názov jazyka" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewLang({ ...newLang, name: e.target.value })} />
+          <select className="w-full bg-zinc-900 p-4 rounded-xl outline-none" onChange={e => setNewLang({ ...newLang, level: e.target.value as any })}>
             {['Rodný jazyk', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1'].map(l => <option key={l} value={l}>{l}</option>)}
           </select>
           <button onClick={() => addItem('languages', newLang, () => setNewLang({}), 'lang-modal')} className={`w-full py-4 rounded-xl font-black ${brandBg}`}>Uložiť</button>
           <button onClick={() => (document.getElementById('lang-modal') as any).close()} className="w-full py-4 text-zinc-500 font-bold">Zrušiť</button>
+        </div>
+      </dialog>
+
+      <dialog id="project-modal" className="bg-zinc-950 border border-white/10 p-8 rounded-[2rem] text-white w-full max-w-2xl outline-none backdrop:backdrop-blur-md">
+        <h3 className="text-xl font-black mb-6">Pridať Projekt</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <input placeholder="Názov projektu" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" value={newProject.title} onChange={e => setNewProject({ ...newProject, title: e.target.value })} />
+            <textarea placeholder="Krátky popis (zobrazí sa na karte)" className="w-full bg-zinc-900 p-4 rounded-xl outline-none h-24 resize-none" value={newProject.description} onChange={e => setNewProject({ ...newProject, description: e.target.value })} />
+            <input placeholder="Odkaz na projekt (URL)" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" value={newProject.link} onChange={e => setNewProject({ ...newProject, link: e.target.value })} />
+
+            <div>
+              <label className="text-xs font-bold text-zinc-500 uppercase mb-2 block">Úvodný obrázok</label>
+              <div className="relative w-full h-32 bg-zinc-900 rounded-xl flex items-center justify-center overflow-hidden border border-white/5 hover:border-white/20 transition-colors cursor-pointer" onClick={() => (document.getElementById('cover-upload') as any).click()}>
+                {newProject.imageUrl ? <img src={newProject.imageUrl} className="w-full h-full object-cover" /> : <div className="text-zinc-500 flex flex-col items-center gap-2"><ImageIcon size={24} /><span className="text-xs">Nahrať cover</span></div>}
+              </div>
+              <input id="cover-upload" type="file" className="hidden" accept="image/*" onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => setNewProject({ ...newProject, imageUrl: reader.result as string });
+                  reader.readAsDataURL(file);
+                }
+              }} />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <textarea placeholder="Detailný popis projektu (zobrazí sa v detaile)" className="w-full bg-zinc-900 p-4 rounded-xl outline-none h-40 resize-none" value={newProject.detailedDescription} onChange={e => setNewProject({ ...newProject, detailedDescription: e.target.value })} />
+
+            <div>
+              <label className="text-xs font-bold text-zinc-500 uppercase mb-2 block">Galéria obrázkov</label>
+              <div className="grid grid-cols-3 gap-2">
+                {newProject.galleryImages?.map((img, idx) => (
+                  <div key={idx} className="aspect-square bg-zinc-900 rounded-lg overflow-hidden relative group">
+                    <img src={img} className="w-full h-full object-cover" />
+                    <button onClick={() => setNewProject({ ...newProject, galleryImages: newProject.galleryImages?.filter((_, i) => i !== idx) })} className="absolute top-1 right-1 bg-black/50 p-1 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"><X size={12} /></button>
+                  </div>
+                ))}
+                <button className="aspect-square bg-zinc-900 rounded-lg flex items-center justify-center border border-white/5 hover:bg-zinc-800 transition-colors" onClick={() => (document.getElementById('gallery-upload') as any).click()}>
+                  <Plus size={20} className="text-zinc-500" />
+                </button>
+              </div>
+              <input key={projectGalleryInputKey} id="gallery-upload" type="file" multiple className="hidden" accept="image/*" onChange={(e) => {
+                const files = Array.from(e.target.files || []);
+                Promise.all(files.map(file => new Promise<string>((resolve) => {
+                  const reader = new FileReader();
+                  reader.onloadend = () => resolve(reader.result as string);
+                  reader.readAsDataURL(file);
+                }))).then(images => {
+                  setNewProject({ ...newProject, galleryImages: [...(newProject.galleryImages || []), ...images] });
+                  setProjectGalleryInputKey(prev => prev + 1);
+                });
+              }} />
+            </div>
+
+            <input placeholder="Tagy (oddelené čiarkou)" className="w-full bg-zinc-900 p-4 rounded-xl outline-none" value={newProject.tags?.join(', ')} onChange={e => setNewProject({ ...newProject, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })} />
+          </div>
+        </div>
+        <div className="flex gap-4 mt-8">
+          <button onClick={() => addItem('projects', newProject, () => setNewProject({ title: '', description: '', detailedDescription: '', imageUrl: '', link: '', galleryImages: [], tags: [] }), 'project-modal')} className={`flex-1 py-4 rounded-xl font-black ${brandBg}`}>Uložiť Projekt</button>
+          <button onClick={() => (document.getElementById('project-modal') as any).close()} className="flex-1 py-4 text-zinc-500 font-bold">Zrušiť</button>
         </div>
       </dialog>
     </div>

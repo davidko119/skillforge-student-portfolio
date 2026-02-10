@@ -24,12 +24,18 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
   const fonts: Record<string, string> = { INTER: 'font-inter', JAKARTA: 'font-jakarta', SPACE: 'font-space', PLAYFAIR: 'font-playfair' };
   const fontClass = fonts[config.font] || 'font-inter';
 
+  /* STATE FOR PROJECT OVERLAY */
+  const [activeProject, setActiveProject] = useState<any | null>(null);
+
+  /* Helper to close overlay */
+  const closeOverlay = () => setActiveProject(null);
+
   return (
     <div className={`bg-black min-h-screen text-white selection:bg-blue-500 selection:text-white ${fontClass} relative`}>
-      
+
       {/* PLÁVAJÚCE TLAČIDLO NASPÄŤ */}
       {onBack && (
-        <button 
+        <button
           onClick={onBack}
           className="fixed top-8 left-8 z-[150] flex items-center gap-3 px-6 py-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full text-xs font-black uppercase tracking-widest hover:bg-white/10 hover:border-white/30 transition-all group shadow-2xl active:scale-95"
         >
@@ -41,7 +47,7 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
       {/* HERO SECTION */}
       <div className={`relative px-8 max-w-7xl mx-auto text-center ${config.layout === 'MINIMAL' ? 'pt-48 pb-32' : 'pt-32 pb-24'}`}>
         <div className={`absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] blur-[150px] rounded-full -z-10 opacity-10 ${theme.bg}`} />
-        
+
         {user.avatarUrl && (
           <div className="mb-10 flex justify-center animate-in fade-in zoom-in duration-1000">
             <div className={`w-40 h-40 md:w-56 md:h-56 rounded-[3.5rem] overflow-hidden border-4 border-white/10 shadow-2xl relative group`}>
@@ -49,11 +55,11 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
             </div>
           </div>
         )}
-        
+
         <h1 className="text-6xl md:text-8xl font-black leading-tight mb-8 tracking-tighter animate-in fade-in slide-in-from-bottom-8 duration-700 font-jakarta">
           {user.headline || user.name}
         </h1>
-        
+
         <p className="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto font-bold leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-1000">
           {user.bio}
         </p>
@@ -138,15 +144,15 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
           <div className="text-center space-y-12">
             <h3 className="text-sm font-black uppercase tracking-[0.5em] text-zinc-600">Jazykové znalosti</h3>
             <div className="flex flex-wrap justify-center gap-4">
-               {user.languages?.map(lang => (
-                 <div key={lang.id} className="px-8 py-4 bg-black border border-white/5 rounded-[2rem] flex items-center gap-6">
-                   <div className={`w-3 h-3 rounded-full ${theme.bg}`} />
-                   <div className="text-left">
-                     <p className="font-black text-lg leading-none mb-1">{lang.name}</p>
-                     <p className={`text-[10px] font-black uppercase tracking-widest ${theme.accent}`}>{lang.level}</p>
-                   </div>
-                 </div>
-               ))}
+              {user.languages?.map(lang => (
+                <div key={lang.id} className="px-8 py-4 bg-black border border-white/5 rounded-[2rem] flex items-center gap-6">
+                  <div className={`w-3 h-3 rounded-full ${theme.bg}`} />
+                  <div className="text-left">
+                    <p className="font-black text-lg leading-none mb-1">{lang.name}</p>
+                    <p className={`text-[10px] font-black uppercase tracking-widest ${theme.accent}`}>{lang.level}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -163,8 +169,8 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
                     </div>
                   </div>
                   <div className="mt-6 px-4">
-                     <h4 className="font-black text-xl font-jakarta">{cert.title}</h4>
-                     <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest">{cert.issuer} • {new Date(cert.date).getFullYear()}</p>
+                    <h4 className="font-black text-xl font-jakarta">{cert.title}</h4>
+                    <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest">{cert.issuer} • {new Date(cert.date).getFullYear()}</p>
                   </div>
                 </div>
               ))}
@@ -178,16 +184,19 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
         <h2 className="text-5xl font-black tracking-tight font-jakarta mb-24">Vybrané Projekty</h2>
         <div className={`${config.layout === 'GRID' ? 'grid grid-cols-1 md:grid-cols-2 gap-16' : 'space-y-32'}`}>
           {user.projects?.map((project, idx) => (
-            <div key={project.id} className={`flex flex-col ${config.layout === 'GRID' ? '' : `lg:flex-row gap-16 items-center ${idx % 2 === 0 ? '' : 'lg:flex-row-reverse'}`}`}>
+            <div key={project.id} className={`flex flex-col group ${config.layout === 'GRID' ? '' : `lg:flex-row gap-16 items-center ${idx % 2 === 0 ? '' : 'lg:flex-row-reverse'}`}`}>
               <div className="flex-1 space-y-6">
-                <h3 className="text-3xl font-black font-jakarta">{project.title}</h3>
-                <p className="text-zinc-400 leading-relaxed font-bold">{project.description}</p>
-                <a href={project.link} className={`inline-flex items-center gap-3 px-8 py-4 ${theme.bg} text-white font-black rounded-full hover:scale-105 transition-all text-xs uppercase tracking-widest`}>
-                  Zobraziť Projekt <ArrowUpRight size={18} />
-                </a>
+                <div className="flex gap-2 flex-wrap">
+                  {project.tags?.map(t => <span key={t} className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-zinc-400 uppercase tracking-wider">{t}</span>)}
+                </div>
+                <h3 className="text-3xl font-black font-jakarta group-hover:text-blue-500 transition-colors cursor-pointer" onClick={() => setActiveProject(project)}>{project.title}</h3>
+                <p className="text-zinc-400 leading-relaxed font-bold line-clamp-3">{project.description}</p>
+                <button onClick={() => setActiveProject(project)} className={`inline-flex items-center gap-3 px-8 py-4 ${theme.bg} text-white font-black rounded-full hover:scale-105 transition-all text-xs uppercase tracking-widest`}>
+                  Zobraziť Detail <ArrowUpRight size={18} />
+                </button>
               </div>
-              <div className="flex-1 aspect-video rounded-[2.5rem] overflow-hidden border border-white/5">
-                <img src={project.imageUrl} className="w-full h-full object-cover" />
+              <div className="flex-1 aspect-video rounded-[2.5rem] overflow-hidden border border-white/5 cursor-pointer" onClick={() => setActiveProject(project)}>
+                <img src={project.imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               </div>
             </div>
           ))}
@@ -200,13 +209,62 @@ const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({ user, onBack }) => 
         <a href={`mailto:${user.email}`} className={`text-3xl md:text-5xl font-black underline decoration-2 underline-offset-8 transition-colors ${theme.text}`}>{user.email}</a>
       </footer>
 
+      {/* PROJECT DETAIL OVERLAY */}
+      {activeProject && (
+        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-3xl overflow-y-auto animate-in slide-in-from-bottom-20 duration-500">
+          <button onClick={closeOverlay} className="fixed top-8 right-8 z-[110] p-4 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all"><X size={24} /></button>
+
+          <div className="max-w-5xl mx-auto p-8 pb-32">
+            <div className="w-full h-[50vh] rounded-[3rem] overflow-hidden mb-16 relative">
+              <img src={activeProject.imageUrl} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+              <div className="absolute bottom-10 left-10 right-10">
+                <h2 className="text-5xl md:text-7xl font-black font-jakarta mb-4">{activeProject.title}</h2>
+                <div className="flex gap-3">
+                  {activeProject.tags?.map((t: string) => <span key={t} className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-sm font-black uppercase tracking-widest">{t}</span>)}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+              <div className="md:col-span-2 space-y-8">
+                <p className="text-xl md:text-2xl text-zinc-300 font-bold leading-relaxed whitespace-pre-line">{activeProject.detailedDescription || activeProject.description}</p>
+
+                {/* GALLERY GRID */}
+                {activeProject.galleryImages && activeProject.galleryImages.length > 0 && (
+                  <div className="space-y-6 pt-8">
+                    <h3 className="text-sm font-black uppercase tracking-[0.2em] text-zinc-500">Galéria</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+                      {activeProject.galleryImages.map((img: string, i: number) => (
+                        <div key={i} className="aspect-square rounded-2xl overflow-hidden cursor-zoom-in hover:opacity-80 transition-opacity" onClick={() => setLightboxImage(img)}>
+                          <img src={img} className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="space-y-8">
+                <div className="p-8 bg-zinc-900 rounded-3xl border border-white/5 space-y-6">
+                  <h3 className="text-xl font-black">O Projekte</h3>
+                  <p className="text-zinc-400 font-bold text-sm">{activeProject.description}</p>
+                  <a href={activeProject.link} target="_blank" rel="noreferrer" className={`flex w-full items-center justify-center gap-2 py-4 rounded-xl font-black ${theme.bg} text-white uppercase tracking-widest text-xs hover:opacity-90 transition-opacity`}>
+                    Navštíviť web <ArrowUpRight size={16} />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Lightbox */}
       {lightboxImage && (
-        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-8 animate-in fade-in duration-300" onClick={() => setLightboxImage(null)}>
-          <button className="absolute top-10 right-10 p-4 text-white hover:text-blue-500 transition-colors z-[110]" onClick={() => setLightboxImage(null)}>
+        <div className="fixed inset-0 z-[200] bg-black/98 backdrop-blur-2xl flex items-center justify-center p-8 animate-in fade-in duration-300" onClick={() => setLightboxImage(null)}>
+          <button className="absolute top-10 right-10 p-4 text-white hover:text-blue-500 transition-colors z-[210]" onClick={() => setLightboxImage(null)}>
             <X size={40} />
           </button>
-          <img src={lightboxImage} className="max-w-6xl max-h-[85vh] rounded-3xl shadow-[0_0_100px_rgba(0,0,0,1)] border border-white/10 object-contain animate-in zoom-in-95 duration-500" onClick={(e) => e.stopPropagation()}/>
+          <img src={lightboxImage} className="max-w-7xl max-h-[85vh] rounded-xl shadow-2xl object-contain animate-in zoom-in-95 duration-500" onClick={(e) => e.stopPropagation()} />
         </div>
       )}
     </div>

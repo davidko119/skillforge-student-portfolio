@@ -39,6 +39,9 @@ export interface Project {
   description: string;
   imageUrl: string;
   link: string;
+  detailedDescription?: string;
+  galleryImages?: string[];
+  tags?: string[];
 }
 
 export interface PortfolioConfig {
