@@ -245,7 +245,44 @@ const App: React.FC = () => {
       case 'QUIZZES': return <QuizLibrary quizzes={quizzes} user={user!} onStartQuiz={(q) => { setActiveQuiz(q); setCurrentView('QUIZ_PLAYER'); }} theme={theme} />;
       case 'QUIZ_PLAYER': return activeQuiz ? <QuizPlayer quiz={activeQuiz} onFinish={() => setCurrentView('QUIZZES')} onCancel={() => setCurrentView('QUIZZES')} /> : null;
       case 'CREATOR_HUB': return <CreatorHub user={user!} onAddQuiz={(q) => setQuizzes([...quizzes, q])} />;
-      case 'PORTFOLIO_PREVIEW': return <PortfolioPreview user={user!} onBack={localStorage.getItem('skillforge_active_session') ? () => setCurrentView('PROFILE') : undefined} />;
+      case 'PORTFOLIO_PREVIEW': return <PortfolioPreview user={user!} onBack={async () => {
+        const sessionEmail = localStorage.getItem('skillforge_active_session');
+        if (sessionEmail) {
+          setIsLoadingUser(true);
+          try {
+            // Restore original user session
+            const doc = await getUserByEmail(sessionEmail);
+            if (doc) {
+              const loadedUser: User = {
+                id: (doc as any).id ?? (doc as any).email,
+                name: (doc as any).name,
+                email: (doc as any).email,
+                bio: (doc as any).bio || 'Vášnivý študent dizajnu a technológií. Hľadám nové príležitosti na rozvoj mojich zručností.',
+                role: UserRole.STUDENT,
+                skills: (doc as any).skills || ['UI/UX Design', 'React', 'TypeScript'],
+                certificates: (doc as any).certificates || [],
+                projects: (doc as any).projects || [],
+                education: (doc as any).education || [],
+                experience: (doc as any).experience || [],
+                languages: (doc as any).languages || [],
+                portfolioConfig: (doc as any).portfolioConfig,
+                savedOpportunityIds: (doc as any).savedOpportunityIds || [],
+                socialLinks: (doc as any).socialLinks || {},
+              };
+              setUser(loadedUser);
+              setCurrentView('PROFILE');
+            } else {
+              setCurrentView('LANDING');
+            }
+          } catch {
+            setCurrentView('LANDING');
+          } finally {
+            setIsLoadingUser(false);
+          }
+        } else {
+          setCurrentView('LANDING');
+        }
+      }} />;
       default: return <LandingPage onStart={() => setCurrentView('AUTH')} theme={theme} />;
     }
   };
