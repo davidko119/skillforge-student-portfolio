@@ -205,9 +205,9 @@ const App: React.FC = () => {
       setUser(loadedUser);
       localStorage.setItem('skillforge_active_session', loadedUser.email);
       setCurrentView('DASHBOARD');
-    } catch (e) {
+    } catch (e: any) {
       console.error('Failed to authenticate with Supabase', e);
-      alert('Prihlasovanie zlyhalo. Skúste to prosím znova.');
+      alert(`Prihlasovanie zlyhalo. Skúste to prosím znova. (${e.message || e})`);
     }
   };
 
@@ -267,9 +267,9 @@ const App: React.FC = () => {
             </button>
           </div>
 
-          <Sidebar 
-            currentView={currentView} 
-            onNavigate={(v) => { setCurrentView(v); setSidebarOpen(false); }} 
+          <Sidebar
+            currentView={currentView}
+            onNavigate={(v) => { setCurrentView(v); setSidebarOpen(false); }}
             user={user}
             onLogout={handleLogout}
             theme={theme}
