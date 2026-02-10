@@ -1,14 +1,13 @@
 
 import React, { useState } from 'react';
-import { User, UserRole } from '../types';
 import Logo from './Logo';
 import { ArrowRight, ShieldCheck, Mail, Lock } from 'lucide-react';
 
 interface AuthProps {
-  onLogin: (user: User) => void;
+  onAuth: (params: { mode: 'login' | 'register'; email: string; password: string; name?: string }) => void;
 }
 
-const Auth: React.FC<AuthProps> = ({ onLogin }) => {
+const Auth: React.FC<AuthProps> = ({ onAuth }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('student@skillforge.sk');
@@ -16,29 +15,12 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const mockUser: User = {
-      id: 'u' + Math.random().toString(36).substr(2, 9),
-      name: name || (isLogin ? 'Ján Novák' : ''),
-      email: email,
-      bio: isLogin ? 'Vášnivý študent dizajnu a technológií. Hľadám nové príležitosti na rozvoj mojich zručností.' : '',
-      role: UserRole.STUDENT,
-      skills: ['UI/UX Design', 'React', 'TypeScript'], 
-      certificates: [], 
-      projects: [], 
-      education: [],
-      experience: [],
-      languages: [
-        { id: 'l1', name: 'Slovenčina', level: 'Rodný jazyk' },
-        { id: 'l2', name: 'Angličtina', level: 'C1' }
-      ],
-      savedOpportunityIds: [],
-      socialLinks: {
-        linkedin: '',
-        github: '',
-        portfolio: ''
-      }
-    };
-    onLogin(mockUser);
+    onAuth({
+      mode: isLogin ? 'login' : 'register',
+      email,
+      password,
+      name: isLogin ? undefined : name,
+    });
   };
 
   return (

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, View, Quiz, AppTheme } from './types';
+import { User, UserRole, View, Quiz, AppTheme, Opportunity } from './types';
 import { MOCK_OPPORTUNITIES, MOCK_QUIZZES } from './constants';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
@@ -15,6 +15,7 @@ import LandingPage from './components/LandingPage';
 import { Menu, X } from 'lucide-react';
 import Logo from './components/Logo';
 import { getUserByEmail, upsertUser } from './userService';
+import { fetchOpportunitiesFromApify } from './apifyService';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -22,10 +23,20 @@ const App: React.FC = () => {
   const [quizzes, setQuizzes] = useState<Quiz[]>(MOCK_QUIZZES);
   const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>(MOCK_OPPORTUNITIES);
   const [theme, setTheme] = useState<AppTheme>(() => {
     return (localStorage.getItem('skillforge_theme') as AppTheme) || 'MODERN_DARK';
   });
   const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true);
+
+  const hashPassword = async (password: string): Promise<string> => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  };
 
   const toggleTheme = () => {
     const newTheme = theme === 'MODERN_DARK' ? 'ELEGANT_LIGHT' : 'MODERN_DARK';
@@ -40,11 +51,28 @@ const App: React.FC = () => {
       const viewParam = params.get('view');
 
       try {
-        // Portfolio share mode – load user by email from Appwrite
+        // Portfolio share mode – load user by email from Supabase
         if (viewParam === 'portfolio' && sharedUserId) {
           const doc = await getUserByEmail(sharedUserId);
           if (doc) {
-            const loadedUser = doc as unknown as User;
+            const loadedUser: User = {
+              id: (doc as any).id ?? (doc as any).email,
+              name: (doc as any).name,
+              email: (doc as any).email,
+              bio: 'Vášnivý študent dizajnu a technológií. Hľadám nové príležitosti na rozvoj mojich zručností.',
+              role: UserRole.STUDENT,
+              skills: ['UI/UX Design', 'React', 'TypeScript'],
+              certificates: [],
+              projects: [],
+              education: [],
+              experience: [],
+              languages: [
+                { id: 'l1', name: 'Slovenčina', level: 'Rodný jazyk' },
+                { id: 'l2', name: 'Angličtina', level: 'C1' }
+              ],
+              savedOpportunityIds: [],
+              socialLinks: {},
+            };
             setUser(loadedUser);
             setCurrentView('PORTFOLIO_PREVIEW');
             setIsLoadingUser(false);
@@ -56,7 +84,24 @@ const App: React.FC = () => {
         if (sessionEmail) {
           const doc = await getUserByEmail(sessionEmail);
           if (doc) {
-            const loadedUser = doc as unknown as User;
+            const loadedUser: User = {
+              id: (doc as any).id ?? (doc as any).email,
+              name: (doc as any).name,
+              email: (doc as any).email,
+              bio: 'Vášnivý študent dizajnu a technológií. Hľadám nové príležitosti na rozvoj mojich zručností.',
+              role: UserRole.STUDENT,
+              skills: ['UI/UX Design', 'React', 'TypeScript'],
+              certificates: [],
+              projects: [],
+              education: [],
+              experience: [],
+              languages: [
+                { id: 'l1', name: 'Slovenčina', level: 'Rodný jazyk' },
+                { id: 'l2', name: 'Angličtina', level: 'C1' }
+              ],
+              savedOpportunityIds: [],
+              socialLinks: {},
+            };
             setUser(loadedUser);
             setCurrentView('DASHBOARD');
           }
@@ -71,19 +116,97 @@ const App: React.FC = () => {
     bootstrap();
   }, []);
 
-  const handleLogin = async (u: User) => {
-    try {
-      const savedDoc = await upsertUser(u);
-      const savedUser = {
-        ...u,
-        id: (savedDoc as any).appUserId ?? u.id,
-      } as User;
+  useEffect(() => {
+    const loadOpportunities = async () => {
+      try {
+        const items = await fetchOpportunitiesFromApify();
+        if (items && items.length) {
+          setOpportunities(items);
+        }
+      } catch (e) {
+        console.error('Failed to load opportunities from Apify', e);
+      }
+    };
 
-      setUser(savedUser);
-      localStorage.setItem('skillforge_active_session', savedUser.email);
+    loadOpportunities();
+  }, []);
+
+  const handleAuth = async (params: { mode: 'login' | 'register'; email: string; password: string; name?: string }) => {
+    const { mode, email, password, name } = params;
+
+    try {
+      if (mode === 'register') {
+        const passwordHash = await hashPassword(password);
+
+        const baseUser: User = {
+          id: email,
+          name: name || 'Nový používateľ',
+          email,
+          bio: 'Vášnivý študent dizajnu a technológií. Hľadám nové príležitosti na rozvoj mojich zručností.',
+          role: UserRole.STUDENT,
+          skills: ['UI/UX Design', 'React', 'TypeScript'],
+          certificates: [],
+          projects: [],
+          education: [],
+          experience: [],
+          languages: [
+            { id: 'l1', name: 'Slovenčina', level: 'Rodný jazyk' },
+            { id: 'l2', name: 'Angličtina', level: 'C1' }
+          ],
+          savedOpportunityIds: [],
+          socialLinks: {},
+          passwordHash,
+        };
+
+        const savedDoc = await upsertUser(baseUser);
+        const savedUser: User = {
+          ...baseUser,
+          id: (savedDoc as any).id ?? baseUser.id,
+        };
+
+        setUser(savedUser);
+        localStorage.setItem('skillforge_active_session', savedUser.email);
+        setCurrentView('DASHBOARD');
+        return;
+      }
+
+      // LOGIN
+      const existing = await getUserByEmail(email);
+      if (!existing) {
+        alert('Účet s týmto e-mailom neexistuje.');
+        return;
+      }
+
+      const submittedHash = await hashPassword(password);
+      if ((existing as any).passwordHash !== submittedHash) {
+        alert('Nesprávne heslo.');
+        return;
+      }
+
+      const loadedUser: User = {
+        id: (existing as any).id ?? (existing as any).email,
+        name: (existing as any).name ?? 'Študent',
+        email: (existing as any).email,
+        bio: 'Vášnivý študent dizajnu a technológií. Hľadám nové príležitosti na rozvoj mojich zručností.',
+        role: UserRole.STUDENT,
+        skills: ['UI/UX Design', 'React', 'TypeScript'],
+        certificates: [],
+        projects: [],
+        education: [],
+        experience: [],
+        languages: [
+          { id: 'l1', name: 'Slovenčina', level: 'Rodný jazyk' },
+          { id: 'l2', name: 'Angličtina', level: 'C1' }
+        ],
+        savedOpportunityIds: [],
+        socialLinks: {},
+      };
+
+      setUser(loadedUser);
+      localStorage.setItem('skillforge_active_session', loadedUser.email);
       setCurrentView('DASHBOARD');
     } catch (e) {
-      console.error('Failed to login / save user to Appwrite', e);
+      console.error('Failed to authenticate with Supabase', e);
       alert('Prihlasovanie zlyhalo. Skúste to prosím znova.');
     }
   };
@@ -115,10 +238,10 @@ const App: React.FC = () => {
 
     switch (currentView) {
       case 'LANDING': return <LandingPage onStart={() => setCurrentView('AUTH')} theme={theme} />;
-      case 'AUTH': return <Auth onLogin={handleLogin} />;
-      case 'DASHBOARD': return <Dashboard user={user!} opportunities={MOCK_OPPORTUNITIES} onNavigate={setCurrentView} theme={theme} />;
+      case 'AUTH': return <Auth onAuth={handleAuth} />;
+      case 'DASHBOARD': return <Dashboard user={user!} opportunities={opportunities} onNavigate={setCurrentView} theme={theme} />;
       case 'PROFILE': return <Profile user={user!} setUser={handleUpdateUser as any} theme={theme} />;
-      case 'CALENDAR': return <CalendarView opportunities={MOCK_OPPORTUNITIES} user={user!} setUser={handleUpdateUser as any} theme={theme} />;
+      case 'CALENDAR': return <CalendarView opportunities={opportunities} user={user!} setUser={handleUpdateUser as any} theme={theme} />;
       case 'QUIZZES': return <QuizLibrary quizzes={quizzes} user={user!} onStartQuiz={(q) => { setActiveQuiz(q); setCurrentView('QUIZ_PLAYER'); }} theme={theme} />;
       case 'QUIZ_PLAYER': return activeQuiz ? <QuizPlayer quiz={activeQuiz} onFinish={() => setCurrentView('QUIZZES')} onCancel={() => setCurrentView('QUIZZES')} /> : null;
       case 'CREATOR_HUB': return <CreatorHub user={user!} onAddQuiz={(q) => setQuizzes([...quizzes, q])} />;

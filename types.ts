@@ -79,6 +79,8 @@ export interface User {
   };
   preferences?: UserPreferences;
   savedOpportunityIds: string[];
+  // Minimal auth field stored in Appwrite (hash hesla)
+  passwordHash?: string;
 }
 
 export interface Opportunity {
